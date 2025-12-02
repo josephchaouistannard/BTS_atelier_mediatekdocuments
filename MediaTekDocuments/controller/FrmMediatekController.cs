@@ -96,5 +96,95 @@ namespace MediaTekDocuments.controller
         {
             return access.CreerExemplaire(exemplaire);
         }
+
+        /// <summary>
+        /// Ajouter un livre dans la BDD
+        /// </summary>
+        /// <param name="livre"></param>
+        /// <returns></returns>
+        public bool AjouterLivre(Livre livre)
+        {
+            return access.AjouterLivre(livre);
+        }
+
+        /// <summary>
+        /// Modifier un livre dans la BDD
+        /// </summary>
+        /// <param name="livre"></param>
+        /// <returns></returns>
+        public bool ModifierLivre(Livre livre)
+        {
+            return access.ModifierLivre(livre);
+        }
+
+        /// <summary>
+        /// Supprimer un livre dans la BDD
+        /// </summary>
+        /// <param name="livre"></param>
+        /// <returns></returns>
+        public bool SupprimerLivre(Livre livre)
+        {
+            return access.SupprimerLivre(livre);
+        }
+
+        /// <summary>
+        /// Ajouter un dvd dans la BDD
+        /// </summary>
+        /// <param name="dvd"></param>
+        /// <returns></returns>
+        public bool AjouterDvd(Dvd dvd)
+        {
+            return access.AjouterDvd(dvd);
+        }
+
+        /// <summary>
+        /// Modifier un dvd dans la BDD
+        /// </summary>
+        /// <param name="dvd"></param>
+        /// <returns></returns>
+        public bool ModifierDvd(Dvd dvd)
+        {
+            return access.ModifierDvd(dvd);
+        }
+
+        /// <summary>
+        /// Supprimer un dvd dans la BDD
+        /// </summary>
+        /// <param name="dvd"></param>
+        /// <returns></returns>
+        public bool SupprimerDvd(Dvd dvd)
+        {
+            return access.SupprimerDvd(dvd);
+        }
+
+        /// <summary>
+        /// Ajouter une revue dans la BDD
+        /// </summary>
+        /// <param name="revue"></param>
+        /// <returns></returns>
+        public bool AjouterRevue(Revue revue)
+        {
+            return access.AjouterRevue(revue);
+        }
+
+        /// <summary>
+        /// Modifier une revue dans la BDD
+        /// </summary>
+        /// <param name="revue"></param>
+        /// <returns></returns>
+        public bool ModifierRevue(Revue revue)
+        {
+            return access.ModifierRevue(revue);
+        }
+
+        /// <summary>
+        /// Supprimer une revue dans la BDD
+        /// </summary>
+        /// <param name="revue"></param>
+        /// <returns></returns>
+        public bool SupprimerRevue(Revue revue)
+        {
+            return access.SupprimerRevue(revue);
+        }
     }
 }
