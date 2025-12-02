@@ -1,11 +1,12 @@
 ﻿using System;
-using System.Windows.Forms;
-using MediaTekDocuments.model;
-using MediaTekDocuments.controller;
 using System.Collections.Generic;
-using System.Linq;
 using System.Drawing;
 using System.IO;
+using System.Linq;
+using System.Windows.Forms;
+using Gherkin.Ast;
+using MediaTekDocuments.controller;
+using MediaTekDocuments.model;
 
 namespace MediaTekDocuments.view
 
@@ -43,6 +44,35 @@ namespace MediaTekDocuments.view
             if (cbx.Items.Count > 0)
             {
                 cbx.SelectedIndex = -1;
+            }
+        }
+
+        /// <summary>
+        /// Fonction commune pour prendre le chemin d'un image pour l'associer avec un document
+        /// </summary>
+        /// <param name="txbChemin"></param>
+        /// <param name="image"></param>
+        private void parcourirImage(TextBox txbChemin, PictureBox image)
+        {
+            string filePath = "";
+            OpenFileDialog openFileDialog = new OpenFileDialog()
+            {
+                // positionnement à la racine du disque où se trouve le dossier actuel
+                InitialDirectory = Path.GetPathRoot(Environment.CurrentDirectory),
+                Filter = "Files|*.jpg;*.bmp;*.jpeg;*.png;*.gif"
+            };
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                filePath = openFileDialog.FileName;
+            }
+            txbChemin.Text = filePath;
+            try
+            {
+                image.Image = Image.FromFile(filePath);
+            }
+            catch
+            {
+                image.Image = null;
             }
         }
         #endregion
@@ -360,6 +390,229 @@ namespace MediaTekDocuments.view
             }
             RemplirLivresListe(sortedList);
         }
+
+        /// <summary>
+        /// Activer ou désactiver l'ajout ou modification de Livres. Désactive la zone de recherche.
+        /// </summary>
+        /// <param name="active">true pour activer</param>
+        public void ModeAjoutModifLivre(bool active, string mode = "")
+        {
+            // zone de modification
+            if (mode == "ajout")
+            {
+                btnLivresEnregistrer.Text = "Ajouter";
+            }
+            else if (mode == "modif")
+            {
+                btnLivresEnregistrer.Text = "Modifier";
+            }
+            else
+            {
+                btnLivresEnregistrer.Text = "Enregistrer";
+            }
+
+            grpLivresInfos.Enabled = active;
+            foreach (Control c in grpLivresInfos.Controls)
+            {
+                if (c is TextBox textBox)
+                {
+                    textBox.ReadOnly = false;
+                }
+            }
+            btnLivresAnnuler.Visible = active;
+            btnLivresEnregistrer.Visible = active;
+            txbLivresNumero.ReadOnly = true; // numéro jamais modifié
+            if (active)
+            {
+                txbLivresTitre.Focus();
+            }
+
+            // zone de recherche
+            grpLivresRecherche.Enabled = !(active);
+        }
+
+
+        /// <summary>
+        /// Clic sur bouton Ajouter dans partie Livre
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnLivresAjouter_Click(object sender, EventArgs e)
+        {
+            VideLivresInfos();
+            ModeAjoutModifLivre(true, "ajout");
+        }
+
+        /// <summary>
+        /// Clic sur bouton Modifier dans partie Livre
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnLivresModifier_Click(object sender, EventArgs e)
+        {
+            // vérfier sélection d'un DVD dans liste
+            if (dgvLivresListe.SelectedRows.Count == 1)
+            {
+                ModeAjoutModifLivre(true, "modif");
+            }
+        }
+
+        /// <summary>
+        /// Clic sur bouton Enregistrer dans partie Livre
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnLivresEnregistrer_Click(object sender, EventArgs e)
+        {
+            string mode = btnLivresEnregistrer.Text;
+            if (mode == "Ajouter" || mode == "Modifier")
+            {
+                string validationMessage = "";
+                Genre genre = bdgGenres.Cast<Genre>()
+                    .FirstOrDefault(g => g.Libelle.Equals(txbLivresGenre.Text));
+                if (genre is null)
+                {
+                    validationMessage += "Saisir un genre valid. ";
+                }
+                Public lePublic = bdgPublics.Cast<Public>()
+                    .FirstOrDefault(p => p.Libelle.Equals(txbLivresPublic.Text));
+                if (lePublic is null)
+                {
+                    validationMessage += "Saisir un public valid. ";
+                }
+                Rayon rayon = bdgRayons.Cast<Rayon>()
+                    .FirstOrDefault(r => r.Libelle.Equals(txbLivresRayon.Text));
+                if (rayon is null)
+                {
+                    validationMessage += "Saisir un rayon valid. ";
+                }
+                
+                
+                if (validationMessage != "")
+                {
+                    MessageBox.Show(
+                        validationMessage,
+                        "Info",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information
+                    );
+                    validationMessage = "";
+
+                } else
+                {
+                    try
+                    {
+                        if (mode == "Ajouter")
+                        {
+                            Livre livre = new Livre(
+                                id: null,
+                                titre: txbLivresTitre.Text,
+                                image: txbLivresImage.Text,
+                                isbn: txbLivresIsbn.Text,
+                                auteur: txbLivresAuteur.Text,
+                                collection: txbLivresCollection.Text,
+                                idGenre: genre.Id,
+                                genre: genre.Libelle,
+                                idPublic: lePublic.Id,
+                                lePublic: lePublic.Libelle,
+                                idRayon: rayon.Id,
+                                rayon: rayon.Libelle
+                            );
+                            this.controller.AjouterLivre(livre);
+                        }
+                        else
+                        {
+                            Livre livre = new Livre(
+                            id: ((Livre)bdgLivresListe.Current).Id,
+                            titre: txbLivresTitre.Text,
+                            image: txbLivresImage.Text,
+                            isbn: txbLivresIsbn.Text,
+                            auteur: txbLivresAuteur.Text,
+                            collection: txbLivresCollection.Text,
+                            idGenre: genre.Id,
+                            genre: genre.Libelle,
+                            idPublic: lePublic.Id,
+                            lePublic: lePublic.Libelle,
+                            idRayon: rayon.Id,
+                            rayon: rayon.Libelle
+                            );
+                            this.controller.ModifierLivre(livre);
+                        }
+                        ModeAjoutModifLivre(false);
+                        TabLivres_Enter(null, null);
+                    } catch(Exception ex)
+                    {
+                        MessageBox.Show(
+                            ex.ToString(),
+                            "Erreur",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Error
+                        );
+                    }
+                    
+                }
+            }                
+        }
+
+        /// <summary>
+        /// Clic sur bouton Annuler dans partie Livre
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnLivresAnnuler_Click(object sender, EventArgs e)
+        {
+            VideLivresInfos(); // Vider si jamais il n'y a rien dans DGV
+            ModeAjoutModifLivre(false);
+        }
+
+        /// <summary>
+        /// Clic sur bouton Supprimer dans partie Livre
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnLivresSupprimer_Click(object sender, EventArgs e)
+        {
+            if (dgvLivresListe.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Veuillez choisir un livre", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            } else
+            {
+                Livre livre = bdgLivresListe.Current as Livre;
+                DialogResult result = MessageBox.Show(
+                    "Supprimer livre " + livre.Titre,
+                    "Confirm Delete",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning
+                );
+
+                if (result == DialogResult.Yes)
+                {
+                    try
+                    {
+                        this.controller.SupprimerLivre(livre);
+                        TabLivres_Enter(null, null);
+                    } catch (Exception ex)
+                    {
+                        MessageBox.Show(
+                            ex.ToString(),
+                            "Erreur",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Error
+                        );
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Clic sur bouton parcourir dans Livres, pour chercher une image
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnLivresParcourir_Click(object sender, EventArgs e)
+        {
+            parcourirImage(txbLivresImage, pcbLivresImage);
+        }
         #endregion
 
         #region Onglet Dvd
@@ -675,6 +928,242 @@ namespace MediaTekDocuments.view
             }
             RemplirDvdListe(sortedList);
         }
+
+        /// <summary>
+        /// Activer ou désactiver l'ajout ou modification de DVD. Désactive la zone de recherche.
+        /// </summary>
+        /// <param name="active">true pour activer</param>
+        public void ModeAjoutModifDvd(bool active, string mode = "")
+        {
+            // zone de modification
+            if (mode == "ajout")
+            {
+                btnDvdEnregistrer.Text = "Ajouter";
+            }
+            else if (mode == "modif")
+            {
+                btnDvdEnregistrer.Text = "Modifier";
+            }
+            else
+            {
+                btnDvdEnregistrer.Text = "Enregistrer";
+            }
+
+            grpDvdInfos.Enabled = active;
+            foreach (Control c in grpDvdInfos.Controls)
+            {
+                if (c is TextBox textBox)
+                {
+                    textBox.ReadOnly = false;
+                }
+            }
+            btnDvdAnnuler.Visible = active;
+            btnDvdEnregistrer.Visible = active;
+            txbDvdNumero.ReadOnly = true; // numéro jamais modifié
+            if (active)
+            {
+                txbDvdTitre.Focus();
+            }
+
+            // zone de recherche
+            grpDvdRecherche.Enabled = !(active);
+
+        }
+
+        /// <summary>
+        /// Clic sur bouton Ajouter dans partie DVD
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void BtnDvdAjouter_Click(object sender, EventArgs e)
+        {
+            VideDvdInfos();
+            ModeAjoutModifDvd(true, "ajout");
+        }
+
+        /// <summary>
+        /// Clic sur bouton Modifier dans partie DVD
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnDvdModifier_Click(object sender, EventArgs e)
+        {
+            // vérfier sélection d'un DVD dans liste
+            if (dgvDvdListe.SelectedRows.Count == 1)
+            {
+                ModeAjoutModifDvd(true, "modif");
+            }
+
+            
+        }
+
+        /// <summary>
+        /// Clic sur bouton Enregistrer dans partie DVD
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void BtnDvdEnregistrer_Click(object sender, EventArgs e)
+        {
+            string mode = btnDvdEnregistrer.Text;
+            if (mode == "Ajouter" || mode == "Modifier")
+            {
+                string validationMessage = "";
+                Genre genre = bdgGenres.Cast<Genre>()
+                    .FirstOrDefault(g => g.Libelle.Equals(txbDvdGenre.Text));
+                if (genre is null)
+                {
+                    validationMessage += "Saisir un genre valid. ";
+                }
+                Public lePublic = bdgPublics.Cast<Public>()
+                    .FirstOrDefault(p => p.Libelle.Equals(txbDvdPublic.Text));
+                if (lePublic is null)
+                {
+                    validationMessage += "Saisir un public valid. ";
+                }
+                Rayon rayon = bdgRayons.Cast<Rayon>()
+                    .FirstOrDefault(r => r.Libelle.Equals(txbDvdRayon.Text));
+                if (rayon is null)
+                {
+                    validationMessage += "Saisir un rayon valid. ";
+                }
+
+                int? duree = null;
+                if (int.TryParse(txbDvdDuree.Text, out int result))
+                {
+                    duree = result;
+                }
+
+                if (validationMessage != "")
+                {
+                    MessageBox.Show(
+                        validationMessage,
+                        "Info",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information
+                    );
+                    validationMessage = "";
+
+                }
+                else
+                {
+                    try
+                    {
+                        
+                        if (mode == "Ajouter")
+                        {
+                            Dvd dvd = new Dvd(
+                                id: null,
+                                titre: txbDvdTitre.Text,
+                                image: txbDvdImage.Text,
+                                duree: duree ?? 0,
+                                realisateur: txbDvdRealisateur.Text,
+                                synopsis: txbDvdSynopsis.Text,
+                                idGenre: genre.Id,
+                                genre: genre.Libelle,
+                                idPublic: lePublic.Id,
+                                lePublic: lePublic.Libelle,
+                                idRayon: rayon.Id,
+                                rayon: rayon.Libelle
+                            );
+                            this.controller.AjouterDvd(dvd);
+                        }
+                        else
+                        {
+                            Dvd dvd = new Dvd(
+                                id: ((Dvd)bdgDvdListe.Current).Id,
+                                titre: txbDvdTitre.Text,
+                                image: txbDvdImage.Text,
+                                duree: duree ?? 0,
+                                realisateur: txbDvdRealisateur.Text,
+                                synopsis: txbDvdSynopsis.Text,
+                                idGenre: genre.Id,
+                                genre: genre.Libelle,
+                                idPublic: lePublic.Id,
+                                lePublic: lePublic.Libelle,
+                                idRayon: rayon.Id,
+                                rayon: rayon.Libelle
+                            );
+                            this.controller.ModifierDvd(dvd);
+                        }
+                        ModeAjoutModifDvd(false);
+                        tabDvd_Enter(null, null);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(
+                            ex.ToString(),
+                            "Erreur",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Error
+                        );
+                    }
+
+                }
+            }
+        }
+
+        /// <summary>
+        /// Clic sur bouton Annuler dans partie DVD
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void BtnDvdAnnuler_Click(object sender, EventArgs e)
+        {
+            VideDvdInfos(); // Vider si jamais il n'y a rien dans DGV
+            ModeAjoutModifDvd(false);
+        }
+
+        /// <summary>
+        /// Clic sur bouton Supprimer dans partie DVD
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnDvdSupprimer_Click(object sender, EventArgs e)
+        {
+            if (dgvDvdListe.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Veuillez choisir un dvd", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                Dvd dvd = bdgDvdListe.Current as Dvd;
+                DialogResult result = MessageBox.Show(
+                    "Supprimer dvd " + dvd.Titre,
+                    "Confirm Delete",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning
+                );
+
+                if (result == DialogResult.Yes)
+                {
+                    try
+                    {
+                        this.controller.SupprimerDvd(dvd);
+                        tabDvd_Enter(null, null);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(
+                            ex.ToString(),
+                            "Erreur",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Error
+                        );
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Clic sur bouton parcourir dans Dvd, pour chercher une image
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnDvdParcourir_Click(object sender, EventArgs e)
+        {
+            parcourirImage(txbDvdImage, pcbDvdImage);
+        }
+
         #endregion
 
         #region Onglet Revues
@@ -986,6 +1475,231 @@ namespace MediaTekDocuments.view
                     break;
             }
             RemplirRevuesListe(sortedList);
+        }
+
+        /// <summary>
+        /// Activer ou désactiver l'ajout ou modification de Revue. Désactive la zone de recherche.
+        /// </summary>
+        /// <param name="active">true pour activer</param>
+        public void ModeAjoutModifRevue(bool active, string mode = "")
+        {
+            // zone de modification
+            if (mode == "ajout")
+            {
+                btnRevuesEnregistrer.Text = "Ajouter";
+            }
+            else if (mode == "modif")
+            {
+                btnRevuesEnregistrer.Text = "Modifier";
+            }
+            else
+            {
+                btnRevuesEnregistrer.Text = "Enregistrer";
+            }
+
+            grpRevuesInfos.Enabled = active;
+            foreach (Control c in grpRevuesInfos.Controls)
+            {
+                if (c is TextBox textBox)
+                {
+                    textBox.ReadOnly = false;
+                }
+            }
+            btnRevuesAnnuler.Visible = active;
+            btnRevuesEnregistrer.Visible = active;
+            txbRevuesNumero.ReadOnly = true; // numéro jamais modifié
+            if (active)
+            {
+                txbRevuesTitre.Focus();
+            }
+
+            // zone de recherche
+            grpRevuesRecherche.Enabled = !(active);
+
+        }
+
+        /// <summary>
+        /// Clic sur bouton Ajouter dans partie Revue
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnRevuesAjouter_Click(object sender, EventArgs e)
+        {
+            VideRevuesInfos();
+            ModeAjoutModifRevue(true, "ajout");
+        }
+
+        /// <summary>
+        /// Clic sur bouton Modifier dans partie Revue
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnRevuesModifier_Click(object sender, EventArgs e)
+        {
+            // vérfier sélection d'une Revue dans liste
+            if (dgvRevuesListe.SelectedRows.Count == 1)
+            {
+                ModeAjoutModifRevue(true, "modif");
+            }
+        }
+
+        /// <summary>
+        /// Clic sur bouton Enregistrer dans partie Revue
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnRevuesEnregistrer_Click(object sender, EventArgs e)
+        {
+            string mode = btnRevuesEnregistrer.Text;
+            if (mode == "Ajouter" || mode == "Modifier")
+            {
+                string validationMessage = "";
+                Genre genre = bdgGenres.Cast<Genre>()
+                    .FirstOrDefault(g => g.Libelle.Equals(txbRevuesGenre.Text));
+                if (genre is null)
+                {
+                    validationMessage += "Saisir un genre valid. ";
+                }
+                Public lePublic = bdgPublics.Cast<Public>()
+                    .FirstOrDefault(p => p.Libelle.Equals(txbRevuesPublic.Text));
+                if (lePublic is null)
+                {
+                    validationMessage += "Saisir un public valid. ";
+                }
+                Rayon rayon = bdgRayons.Cast<Rayon>()
+                    .FirstOrDefault(r => r.Libelle.Equals(txbRevuesRayon.Text));
+                if (rayon is null)
+                {
+                    validationMessage += "Saisir un rayon valid. ";
+                }
+
+                int? delaiDispo = null;
+                if (int.TryParse(txbRevuesDateMiseADispo.Text, out int result))
+                {
+                    delaiDispo = result;
+                }
+
+                if (validationMessage != "")
+                {
+                    MessageBox.Show(
+                        validationMessage,
+                        "Info",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information
+                    );
+                    validationMessage = "";
+
+                }
+                else
+                {
+                    try
+                    {
+                        if (mode == "Ajouter")
+                        {
+                            Revue revue = new Revue(
+                                id: null,
+                                titre: txbRevuesTitre.Text,
+                                image: txbRevuesImage.Text,
+                                periodicite: txbRevuesPeriodicite.Text,
+                                delaiMiseADispo: delaiDispo ?? 0,
+                                idGenre: genre.Id,
+                                genre: genre.Libelle,
+                                idPublic: lePublic.Id,
+                                lePublic: lePublic.Libelle,
+                                idRayon: rayon.Id,
+                                rayon: rayon.Libelle
+                            );
+                            this.controller.AjouterRevue(revue);
+                        }
+                        else
+                        {
+                            Revue revue = new Revue(
+                            id: ((Revue)bdgRevuesListe.Current).Id,
+                            titre: txbRevuesTitre.Text,
+                            image: txbRevuesImage.Text,
+                            periodicite: txbRevuesPeriodicite.Text,
+                            delaiMiseADispo: delaiDispo ?? 0,
+                            idGenre: genre.Id,
+                            genre: genre.Libelle,
+                            idPublic: lePublic.Id,
+                            lePublic: lePublic.Libelle,
+                            idRayon: rayon.Id,
+                            rayon: rayon.Libelle
+                            );
+                            this.controller.ModifierRevue(revue);
+                        }
+                        ModeAjoutModifRevue(false);
+                        tabRevues_Enter(null, null);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(
+                            ex.ToString(),
+                            "Erreur",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Error
+                        );
+                    }
+
+                }
+            }
+        }
+
+        /// <summary>
+        /// Clic sur bouton Annuler dans partie Revue
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnRevuesAnnuler_Click(object sender, EventArgs e)
+        {
+            VideRevuesInfos(); // Vider si jamais il n'y a rien dans DGV
+            ModeAjoutModifRevue(false);
+        }
+
+        private void btnRevuesSupprimer_Click(object sender, EventArgs e)
+        {
+            if (dgvRevuesListe.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Veuillez choisir une revue", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                Revue revue = bdgRevuesListe.Current as Revue;
+                DialogResult result = MessageBox.Show(
+                    "Supprimer revue " + revue.Titre,
+                    "Confirm Delete",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning
+                );
+
+                if (result == DialogResult.Yes)
+                {
+                    try
+                    {
+                        this.controller.SupprimerRevue(revue);
+                        tabRevues_Enter(null, null);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(
+                            ex.ToString(),
+                            "Erreur",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Error
+                        );
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Clic sur bouton parcourir dans Revues, pour chercher une image
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnRevuesParcourir_Click(object sender, EventArgs e)
+        {
+            parcourirImage(txbRevuesImage, pcbRevuesImage);
         }
         #endregion
 
