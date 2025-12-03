@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using MediaTekDocuments.model;
+using System.Configuration;
+using System.Linq;
+using System.Xml.Linq;
 using MediaTekDocuments.manager;
+using MediaTekDocuments.model;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
-using System.Configuration;
-using System.Linq;
+using TechTalk.SpecFlow.CommonModels;
 
 namespace MediaTekDocuments.dal
 {
@@ -117,6 +119,22 @@ namespace MediaTekDocuments.dal
         }
 
         /// <summary>
+        /// Retourne un livre par son id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public Livre GetLivre(string id)
+        {
+            String jsonId = convertToJson("id", id);
+            List<Livre> liste = TraitementRecup<Livre>(GET, "livre/" + jsonId, null);
+            if (liste.Count > 0)
+            {
+                return liste[0];
+            }
+            return null;            
+        }
+            
+        /// <summary>
         /// Retourne toutes les dvd à partir de la BDD
         /// </summary>
         /// <returns>Liste d'objets Dvd</returns>
@@ -127,15 +145,126 @@ namespace MediaTekDocuments.dal
         }
 
         /// <summary>
+        /// Retourne un dvd par son id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public Dvd GetDvd(string id)
+        {
+            String jsonId = convertToJson("id", id);
+            List<Dvd> liste = TraitementRecup<Dvd>(GET, "dvd/" + jsonId, null);
+            if (liste.Count > 0)
+            {
+                return liste[0];
+            }
+            return null;
+        }
+
+        /// <summary>
         /// Retourne toutes les revues à partir de la BDD
         /// </summary>
-        /// <returns>Liste d'objets Revue</returns>
+        /// <returns></returns>
         public List<Revue> GetAllRevues()
         {
             List<Revue> lesRevues = TraitementRecup<Revue>(GET, "revue", null);
             return lesRevues;
         }
 
+        /// <summary>
+        /// Get tous les commandes, soit pour les livres soit pour les DVDs
+        /// </summary>
+        /// <param name="type">"livre" ou "dvd"</param>
+        /// <returns></returns>
+        public List<CommandeDocument> GetAllCommandesDocument(string type)
+        {
+            String jsonType = convertToJson("type", type);
+            List<CommandeDocument> lesCommandesDocument = TraitementRecup<CommandeDocument>(GET, "commandes/" + jsonType, null);
+            return lesCommandesDocument;
+        }
+
+        /// <summary>
+        /// Get les commandes pour un livre ou dvd spécifique
+        /// </summary>
+        /// <param name="numDoc"></param>
+        /// <returns></returns>
+        public List<CommandeDocument> GetCommandesDocument(string numDoc)
+        {
+            String jsonId = convertToJson("id", numDoc);
+            List<CommandeDocument> liste = TraitementRecup<CommandeDocument>(GET, "commandes/" + jsonId, null);
+            return liste;
+        }
+
+        /// <summary>
+        /// Enregistrer une commande d'un livre ou dvd
+        /// </summary>
+        /// <param name="commande"></param>
+        /// <returns></returns>
+        public bool AjouterCommandeDocument(CommandeDocument commande)
+        {
+            String jsonCommande = JsonConvert.SerializeObject(commande, new CustomDateTimeConverter());
+            Console.WriteLine(jsonCommande);
+            try
+            {
+                List<CommandeDocument> liste = TraitementRecup<CommandeDocument>(POST, "commande", "champs=" + jsonCommande);
+                return (liste != null);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Modifier une commande d'un livre ou dvd
+        /// </summary>
+        /// <param name="commande"></param>
+        /// <returns></returns>
+        public bool ModifierCommandeDocument(CommandeDocument commande)
+        {
+            String jsonCommande = JsonConvert.SerializeObject(commande, new CustomDateTimeConverter());
+            Console.WriteLine(jsonCommande);
+            try
+            {
+                List<CommandeDocument> liste = TraitementRecup<CommandeDocument>(PUT, "commande", "champs=" + jsonCommande);
+                return (liste != null);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Supprimer une commande d'un livre ou dvd
+        /// </summary>
+        /// <param name="commande"></param>
+        /// <returns></returns>
+        public bool SupprimerCommandeDocument(CommandeDocument commande)
+        {
+            String jsonId = convertToJson("id", commande.Id);
+            try
+            {
+                List<Livre> liste = TraitementRecup<Livre>(DELETE, "commande/" + jsonId, null);
+                return (liste != null);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Get toutes les étapes de suivi pour les commandes
+        /// </summary>
+        /// <returns></returns>
+        public List<Suivi> GetAllSuivi()
+        {
+            List<Suivi> lesSuivis = TraitementRecup<Suivi>(GET, "suivi", null);
+            return lesSuivis;
+        }
 
         /// <summary>
         /// Retourne les exemplaires d'une revue
