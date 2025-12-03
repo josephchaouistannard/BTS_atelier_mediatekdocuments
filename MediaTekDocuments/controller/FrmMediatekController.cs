@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using MediaTekDocuments.model;
 using MediaTekDocuments.dal;
+using System;
 
 namespace MediaTekDocuments.controller
 {
@@ -41,12 +42,32 @@ namespace MediaTekDocuments.controller
         }
 
         /// <summary>
+        /// Get un livre par son id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public Livre GetLivre(string id)
+        {
+            return access.GetLivre(id);
+        }
+
+        /// <summary>
         /// getter sur la liste des Dvd
         /// </summary>
         /// <returns>Liste d'objets dvd</returns>
         public List<Dvd> GetAllDvd()
         {
             return access.GetAllDvd();
+        }
+
+        /// <summary>
+        /// Get un dvd par son id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public Dvd GetDvd(string id)
+        {
+            return access.GetDvd(id);
         }
 
         /// <summary>
@@ -185,6 +206,65 @@ namespace MediaTekDocuments.controller
         public bool SupprimerRevue(Revue revue)
         {
             return access.SupprimerRevue(revue);
+        }
+
+        /// <summary>
+        /// Get tous les commandes, soit pour les livres, soit pour les DVDs
+        /// </summary>
+        /// <param name="type">"livre" ou "dvd"</param>
+        /// <returns></returns>
+        public List<CommandeDocument> GetAllCommandesDocument(string type)
+        {
+            return access.GetAllCommandesDocument(type);
+        }
+
+        /// <summary>
+        /// Get les commandes pour un document spécifique
+        /// </summary>
+        /// <param name="numDoc"></param>
+        /// <returns></returns>
+        public List<CommandeDocument> GetCommandesDocument(string numDoc)
+        {
+            return access.GetCommandesDocument(numDoc);
+        }
+
+        /// <summary>
+        /// Enregistrer une commande d'un livre ou dvd
+        /// </summary>
+        /// <param name="commande"></param>
+        /// <returns></returns>
+        public bool AjouterCommandeDocument(CommandeDocument commande)
+        {
+            return access.AjouterCommandeDocument(commande);
+        }
+
+        /// <summary>
+        /// Modifier une commande d'un livre ou dvd
+        /// </summary>
+        /// <param name="commande"></param>
+        /// <returns></returns>
+        public bool ModifierCommandeDocument(CommandeDocument commande)
+        {
+            return access.ModifierCommandeDocument(commande);
+        }
+
+        /// <summary>
+        /// Supprimer une commande d'un livre ou dvd
+        /// </summary>
+        /// <param name="commande"></param>
+        /// <returns></returns>
+        public bool SupprimerCommandeDocument(CommandeDocument commande)
+        {
+            return access.SupprimerCommandeDocument(commande);
+        }
+
+        /// <summary>
+        /// Get les étapes de suivi possible pour les commandes
+        /// </summary>
+        /// <returns></returns>
+        public List<Suivi> GetAllSuivi()
+        {
+            return access.GetAllSuivi();
         }
     }
 }
