@@ -144,6 +144,7 @@
     <Compile Include="manager\ApiRest.cs" />
     <Compile Include="controller\FrmMediatekController.cs" />
     <Compile Include="dal\Access.cs" />
+    <Compile Include="model\Abonnement.cs" />
     <Compile Include="model\CommandeDocument.cs" />
     <Compile Include="model\Suivi.cs" />
     <Compile Include="view\FrmMediatek.cs">

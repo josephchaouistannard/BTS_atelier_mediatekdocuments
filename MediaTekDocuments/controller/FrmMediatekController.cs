@@ -266,5 +266,58 @@ namespace MediaTekDocuments.controller
         {
             return access.GetAllSuivi();
         }
+
+        /// <summary>
+        /// Retourne tous les abonnements
+        /// </summary>
+        /// <returns></returns>
+        public List<Abonnement> GetAllAbonnements()
+        {
+            return access.GetAllAbonnements();
+        }
+        /// <summary>
+        /// Retourne les abonnements d'une revue spécifique
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public List<Abonnement> GetAbonnementsRevue(string id)
+        {
+            return access.GetAbonnementsRevue(id);
+        }
+        /// <summary>
+        /// Retourne une revue spécifique
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public Revue GetRevue(string id)
+        {
+            return access.GetRevue(id);
+        }
+        /// <summary>
+        /// Enregistre un abonnement
+        /// </summary>
+        /// <param name="abonnement"></param>
+        /// <returns></returns>
+        public bool AjouterAbonnement(Abonnement abonnement)
+        {
+            return access.AjouterAbonnement(abonnement);
+        }
+        /// <summary>
+        /// Demande la suppression d'un abonnement
+        /// </summary>
+        /// <param name="abonnement"></param>
+        /// <returns></returns>
+        public bool SupprimerAbonnement(Abonnement abonnement)
+        {
+            return access.SupprimerAbonnement(abonnement);
+        }
+        /// <summary>
+        /// Retourne les abonnements dont la date de fin est dans moins de 30 jours
+        /// </summary>
+        /// <returns></returns>
+        public List<Abonnement> GetAbonnementsAvecFinProche()
+        {
+            return access.GetAbonnementsAvecFinProche();
+        }
     }
 }
