@@ -487,6 +487,91 @@ namespace MediaTekDocuments.dal
         }
 
         /// <summary>
+        /// Retourne tous les abonnements revues
+        /// </summary>
+        /// <returns></returns>
+        public List<Abonnement> GetAllAbonnements()
+        {
+            List<Abonnement> liste = TraitementRecup<Abonnement>(GET, "abonnements", null);
+            return liste;
+        }
+        /// <summary>
+        /// Retourne tous les abonnements d'une revue spécifique
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public List<Abonnement> GetAbonnementsRevue(string id)
+        {
+            String jsonId = convertToJson("id", id);
+            List<Abonnement> liste = TraitementRecup<Abonnement>(GET, "abonnements/" + jsonId, null);
+            return liste;
+        }
+        /// <summary>
+        /// Retourne les abonnements dont la date de fin est dans moins de 30 jours
+        /// </summary>
+        /// <returns></returns>
+        public List<Abonnement> GetAbonnementsAvecFinProche()
+        {
+            String jsonFin = convertToJson("fin", "1");
+            List<Abonnement> liste = TraitementRecup<Abonnement>(GET, "abonnements/" + jsonFin, null);
+            return liste;
+        }
+        /// <summary>
+        /// Retourne une revue spécifiée par son id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public Revue GetRevue(string id)
+        {
+            String jsonId = convertToJson("id", id);
+            List<Revue> liste = TraitementRecup<Revue>(GET, "revue/" + jsonId, null);
+            if (liste.Count > 0)
+            {
+                return liste[0];
+            }
+            return null;
+        }
+        /// <summary>
+        /// Enregistre un abonnement
+        /// </summary>
+        /// <param name="abonnement"></param>
+        /// <returns></returns>
+        public bool AjouterAbonnement(Abonnement abonnement)
+        {
+            String jsonAbonnement = JsonConvert.SerializeObject(abonnement, new CustomDateTimeConverter());
+            Console.WriteLine(jsonAbonnement);
+            try
+            {
+                List<Abonnement> liste = TraitementRecup<Abonnement>(POST, "abonnement", "champs=" + jsonAbonnement);
+                return (liste != null);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return false;
+        }
+        /// <summary>
+        /// Demande la suppression d'un abonnement
+        /// </summary>
+        /// <param name="abonnement"></param>
+        /// <returns></returns>
+        public bool SupprimerAbonnement(Abonnement abonnement)
+        {
+            String jsonId = convertToJson("id", abonnement.Id);
+            try
+            {
+                List<Abonnement> liste = TraitementRecup<Abonnement>(DELETE, "abonnement/" + jsonId, null);
+                return (liste != null);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return false;
+        }
+
+        /// <summary>
         /// Traitement de la récupération du retour de l'api, avec conversion du json en liste pour les select (GET)
         /// </summary>
         /// <typeparam name="T"></typeparam>
