@@ -267,15 +267,66 @@ namespace MediaTekDocuments.dal
         }
 
         /// <summary>
-        /// Retourne les exemplaires d'une revue
+        /// Get toutes les etats d'exemplaires
+        /// </summary>
+        /// <returns></returns>
+        public List<Etat> GetAllEtats()
+        {
+            List<Etat> lesEtats = TraitementRecup<Etat>(GET, "etat", null);
+            return lesEtats;
+        }
+
+        /// <summary>
+        /// Retourne les exemplaires d'un document
         /// </summary>
         /// <param name="idDocument">id de la revue concernée</param>
         /// <returns>Liste d'objets Exemplaire</returns>
-        public List<Exemplaire> GetExemplairesRevue(string idDocument)
+        public List<Exemplaire> GetExemplairesDocument(string idDocument)
         {
             String jsonIdDocument = convertToJson("id", idDocument);
             List<Exemplaire> lesExemplaires = TraitementRecup<Exemplaire>(GET, "exemplaire/" + jsonIdDocument, null);
             return lesExemplaires;
+        }
+
+        /// <summary>
+        /// Modifie un exemplaire dans la BDD
+        /// </summary>
+        /// <param name="exemplaire"></param>
+        /// <returns></returns>
+        public bool ModifierExemplaire(Exemplaire exemplaire)
+        {
+            String jsonExemplaire = JsonConvert.SerializeObject(exemplaire, new CustomDateTimeConverter());
+            Console.WriteLine(jsonExemplaire);
+            try
+            {
+                List<Livre> liste = TraitementRecup<Livre>(PUT, "exemplaire", "champs=" + jsonExemplaire);
+                return (liste != null);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Supprime un exemplaire dans la BDD
+        /// </summary>
+        /// <param name="exemplaire"></param>
+        /// <returns></returns>
+        public bool SupprimerExemplaire(Exemplaire exemplaire)
+        {
+            String jsonExemplaire = JsonConvert.SerializeObject(exemplaire, new CustomDateTimeConverter());
+            try
+            {
+                List<Exemplaire> liste = TraitementRecup<Exemplaire>(DELETE, "exemplaire/" + jsonExemplaire, null);
+                return (liste != null);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return false;
         }
 
         /// <summary>
