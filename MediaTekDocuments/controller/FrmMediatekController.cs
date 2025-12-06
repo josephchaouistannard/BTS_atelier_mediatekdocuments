@@ -97,16 +97,45 @@ namespace MediaTekDocuments.controller
             return access.GetAllPublics();
         }
 
+        /// <summary>
+        /// getter sur les etats d'exemplaires
+        /// </summary>
+        /// <returns>Liste d'objets Public</returns>
+        public List<Etat> GetAllEtats()
+        {
+            return access.GetAllEtats();
+        }
 
         /// <summary>
-        /// récupère les exemplaires d'une revue
+        /// récupère les exemplaires d'un document
         /// </summary>
         /// <param name="idDocuement">id de la revue concernée</param>
         /// <returns>Liste d'objets Exemplaire</returns>
-        public List<Exemplaire> GetExemplairesRevue(string idDocuement)
+        public List<Exemplaire> GetExemplairesDocument(string idDocuement)
         {
-            return access.GetExemplairesRevue(idDocuement);
+            return access.GetExemplairesDocument(idDocuement);
         }
+
+        /// <summary>
+        /// Modifie un exemplaire dans la BDD
+        /// </summary>
+        /// <param name="exemplaire"></param>
+        /// <returns></returns>
+        public bool ModifierExemplaire(Exemplaire exemplaire)
+        {
+            return access.ModifierExemplaire(exemplaire);
+        }
+
+        /// <summary>
+        /// Supprime un exemplaire dans la BDD
+        /// </summary>
+        /// <param name="exemplaire"></param>
+        /// <returns></returns>
+        public bool SupprimerExemplaire(Exemplaire exemplaire)
+        {
+            return access.SupprimerExemplaire(exemplaire);
+        }
+
 
         /// <summary>
         /// Crée un exemplaire d'une revue dans la bdd
