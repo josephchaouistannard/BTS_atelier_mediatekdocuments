@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Xml.Linq;
 using MediaTekDocuments.manager;
 using MediaTekDocuments.model;
@@ -623,6 +625,42 @@ namespace MediaTekDocuments.dal
         }
 
         /// <summary>
+        /// Tenter la connexion avec les identifiants donnés
+        /// </summary>
+        /// <param name="login"></param>
+        /// <param name="mdp"></param>
+        /// <returns></returns>
+        public List<Utilisateur> ConnexionUtilisateur(string login, string mdp)
+        {
+            mdp = HashWithSha256(mdp);
+            String json = $"{{\"login\":\"{login}\",\"pwd\":\"{mdp}\"}}";
+            List<Utilisateur> liste = TraitementRecup<Utilisateur>(POST, "auth", "champs=" + json);
+            return liste;
+        }
+        /// <summary>
+        /// Hacher un mot de passe avec SHA256
+        /// </summary>
+        /// <param name="pwdPlain"></param>
+        /// <returns></returns>
+        private string HashWithSha256(string pwdPlain)
+        {
+            using (SHA256 sha256Hash = SHA256.Create())
+            {
+                byte[] pwdBytes = Encoding.UTF8.GetBytes(pwdPlain);
+                byte[] hashBytes = sha256Hash.ComputeHash(pwdBytes);
+
+                StringBuilder hashStringBuilder = new StringBuilder();
+                foreach (byte b in hashBytes)
+                {
+                    hashStringBuilder.Append(b.ToString("x2"));
+                }
+
+                return hashStringBuilder.ToString();
+            }
+        }
+
+
+        /// <summary>
         /// Traitement de la récupération du retour de l'api, avec conversion du json en liste pour les select (GET)
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -642,8 +680,8 @@ namespace MediaTekDocuments.dal
                 String code = (String)retour["code"];
                 if (code.Equals("200"))
                 {
-                    // dans le cas du GET (select), récupération de la liste d'objets
-                    if (methode.Equals(GET))
+                    // dans le cas du GET (select) ou authentification avec POST, récupération de la liste d'objets
+                    if (methode.Equals(GET)  || message == "auth")
                     {
                         String resultString = JsonConvert.SerializeObject(retour["result"]);
                         // construction de la liste d'objets à partir du retour de l'api

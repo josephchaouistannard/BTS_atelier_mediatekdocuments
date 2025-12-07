@@ -24,14 +24,17 @@ namespace MediaTekDocuments.view
         private readonly BindingSource bdgRayons = new BindingSource();
         private readonly BindingSource bdgSuivis = new BindingSource();
         private readonly BindingSource bdgEtats = new BindingSource();
+        private readonly Utilisateur utilisateur;
+        private const int ADMIN = 1;
 
         /// <summary>
         /// Constructeur : création du contrôleur lié à ce formulaire
         /// </summary>
-        public FrmMediatek()
+        public FrmMediatek(Utilisateur utilisateur)
         {
             InitializeComponent();
             this.controller = new FrmMediatekController();
+            this.utilisateur = utilisateur;
         }
 
         /// <summary>
@@ -3413,7 +3416,7 @@ namespace MediaTekDocuments.view
         private void FrmMediatek_Load(object sender, EventArgs e)
         {
             List<Abonnement> abonnements = controller.GetAbonnementsAvecFinProche();
-            if (abonnements.Count > 0)
+            if (abonnements.Count > 0 && utilisateur.IdService == ADMIN)
             {
                 string message = "";
                 foreach (Abonnement abonnement in abonnements) {
@@ -3422,7 +3425,48 @@ namespace MediaTekDocuments.view
                 }
                 MessageBox.Show(message, "Alerte");
             }
+
+            if (utilisateur.IdService != ADMIN)
+            {
+                tabOngletsApplication.TabPages.Remove(tabCommandesLivres);
+                tabOngletsApplication.TabPages.Remove(tabCommandesDvd);
+                tabOngletsApplication.TabPages.Remove(tabReceptionRevue);
+                tabOngletsApplication.TabPages.Remove(tabAbonnementsRevues);
+
+                btnLivresAjouter.Visible = false;
+                btnLivresModifier.Visible = false;
+                btnLivresSupprimer.Visible = false;
+                btnLivresParcourir.Visible = false;
+                cbxLivresExemplairesEtat.Visible = false;
+                btnLivresExemplairesEnregistrer.Visible = false;
+                btnLivresExemplairesSupprimer.Visible = false;
+                lblLivresExemplairesEtat.Visible = false;
+
+                btnDvdAjouter.Visible = false;
+                btnDvdModifier.Visible = false;
+                btnDvdSupprimer.Visible = false;
+                btnDvdParcourir.Visible = false;
+                cbxDvdExemplairesEtat.Visible = false;
+                btnDvdExemplairesEnregistrer.Visible = false;
+                btnDvdExemplairesSupprimer.Visible = false;
+                lblDvdExemplairesEtat.Visible = false;
+
+                btnRevuesAjouter.Visible = false;
+                btnRevuesModifier.Visible = false;
+                btnRevuesSupprimer.Visible = false;
+                btnRevuesParcourir.Visible = false;
+            }
+            
         }
 
+        /// <summary>
+        /// Fermeture de la fenêtre
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void FrmMediatek_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Environment.Exit(0);
+        }
     }
 }
