@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using TechTalk.SpecFlow.CommonModels;
+using Serilog;
 
 namespace MediaTekDocuments.dal
 {
@@ -73,6 +74,11 @@ namespace MediaTekDocuments.dal
         /// </summary>
         private Access()
         {
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Verbose()
+                .WriteTo.Console()
+                .WriteTo.File("logs/log.txt", rollingInterval: RollingInterval.Day)
+                .CreateLogger();
             String authenticationString;
             try
             {
@@ -81,7 +87,7 @@ namespace MediaTekDocuments.dal
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                Log.Error(e.Message);
                 Environment.Exit(0);
             }
         }
@@ -223,7 +229,7 @@ namespace MediaTekDocuments.dal
         public bool AjouterCommandeDocument(CommandeDocument commande)
         {
             String jsonCommande = JsonConvert.SerializeObject(commande, new CustomDateTimeConverter());
-            Console.WriteLine(jsonCommande);
+            Log.Debug(jsonCommande);
             try
             {
                 List<CommandeDocument> liste = TraitementRecup<CommandeDocument>(POST, "commande", "champs=" + jsonCommande);
@@ -231,7 +237,7 @@ namespace MediaTekDocuments.dal
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Log.Error(ex.Message);
             }
             return false;
         }
@@ -244,7 +250,7 @@ namespace MediaTekDocuments.dal
         public bool ModifierCommandeDocument(CommandeDocument commande)
         {
             String jsonCommande = JsonConvert.SerializeObject(commande, new CustomDateTimeConverter());
-            Console.WriteLine(jsonCommande);
+            Log.Debug(jsonCommande);
             try
             {
                 List<CommandeDocument> liste = TraitementRecup<CommandeDocument>(PUT, "commande", "champs=" + jsonCommande);
@@ -252,7 +258,7 @@ namespace MediaTekDocuments.dal
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Log.Error(ex.Message);
             }
             return false;
         }
@@ -272,7 +278,7 @@ namespace MediaTekDocuments.dal
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Log.Error(ex.Message);
             }
             return false;
         }
@@ -317,7 +323,7 @@ namespace MediaTekDocuments.dal
         public bool ModifierExemplaire(Exemplaire exemplaire)
         {
             String jsonExemplaire = JsonConvert.SerializeObject(exemplaire, new CustomDateTimeConverter());
-            Console.WriteLine(jsonExemplaire);
+            Log.Debug(jsonExemplaire);
             try
             {
                 List<Livre> liste = TraitementRecup<Livre>(PUT, "exemplaire", "champs=" + jsonExemplaire);
@@ -325,7 +331,7 @@ namespace MediaTekDocuments.dal
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Log.Error(ex.Message);
             }
             return false;
         }
@@ -345,7 +351,7 @@ namespace MediaTekDocuments.dal
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Log.Error(ex.Message);
             }
             return false;
         }
@@ -365,7 +371,7 @@ namespace MediaTekDocuments.dal
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Log.Error(ex.Message);
             }
             return false;
         }
@@ -378,7 +384,7 @@ namespace MediaTekDocuments.dal
         public bool AjouterLivre(Livre livre)
         {
             String jsonLivre = JsonConvert.SerializeObject(livre, new CustomDateTimeConverter());
-            Console.WriteLine(jsonLivre);
+            Log.Debug(jsonLivre);
             try
             {
                 List<Livre> liste = TraitementRecup<Livre>(POST, "livre", "champs=" + jsonLivre);
@@ -386,7 +392,7 @@ namespace MediaTekDocuments.dal
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Log.Error(ex.Message);
             }
             return false;
         }
@@ -399,7 +405,7 @@ namespace MediaTekDocuments.dal
         public bool ModifierLivre(Livre livre)
         {
             String jsonLivre = JsonConvert.SerializeObject(livre, new CustomDateTimeConverter());
-            Console.WriteLine(jsonLivre);
+            Log.Debug(jsonLivre);
             try
             {
                 List<Livre> liste = TraitementRecup<Livre>(PUT, "livre", "champs=" + jsonLivre);
@@ -407,7 +413,7 @@ namespace MediaTekDocuments.dal
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Log.Error(ex.Message);
             }
             return false;
         }
@@ -427,7 +433,7 @@ namespace MediaTekDocuments.dal
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Log.Error(ex.Message);
             }
             return false;
         }
@@ -440,7 +446,7 @@ namespace MediaTekDocuments.dal
         public bool AjouterDvd(Dvd dvd)
         {
             String jsonDvd = JsonConvert.SerializeObject(dvd, new CustomDateTimeConverter());
-            Console.WriteLine(jsonDvd);
+            Log.Debug(jsonDvd);
             try
             {
                 List<Dvd> liste = TraitementRecup<Dvd>(POST, "dvd", "champs=" + jsonDvd);
@@ -448,7 +454,7 @@ namespace MediaTekDocuments.dal
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Log.Error(ex.Message);
             }
             return false;
         }
@@ -461,7 +467,7 @@ namespace MediaTekDocuments.dal
         public bool ModifierDvd(Dvd dvd)
         {
             String jsonDvd = JsonConvert.SerializeObject(dvd, new CustomDateTimeConverter());
-            Console.WriteLine(jsonDvd);
+            Log.Debug(jsonDvd);
             try
             {
                 List<Dvd> liste = TraitementRecup<Dvd>(PUT, "dvd", "champs=" + jsonDvd);
@@ -469,7 +475,7 @@ namespace MediaTekDocuments.dal
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Log.Error(ex.Message);
             }
             return false;
         }
@@ -482,7 +488,7 @@ namespace MediaTekDocuments.dal
         public bool SupprimerDvd(Dvd dvd)
         {
             String jsonDvd = JsonConvert.SerializeObject(dvd, new CustomDateTimeConverter());
-            Console.WriteLine(jsonDvd);
+            Log.Debug(jsonDvd);
             try
             {
                 List<Dvd> liste = TraitementRecup<Dvd>(DELETE, "dvd", "champs=" + jsonDvd);
@@ -490,7 +496,7 @@ namespace MediaTekDocuments.dal
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Log.Error(ex.Message);
             }
             return false;
         }
@@ -503,7 +509,7 @@ namespace MediaTekDocuments.dal
         public bool AjouterRevue(Revue revue)
         {
             String jsonRevue = JsonConvert.SerializeObject(revue, new CustomDateTimeConverter());
-            Console.WriteLine(jsonRevue);
+            Log.Debug(jsonRevue);
             try
             {
                 List<Revue> liste = TraitementRecup<Revue>(POST, "revue", "champs=" + jsonRevue);
@@ -511,7 +517,7 @@ namespace MediaTekDocuments.dal
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Log.Error(ex.Message);
             }
             return false;
         }
@@ -524,7 +530,7 @@ namespace MediaTekDocuments.dal
         public bool ModifierRevue(Revue revue)
         {
             String jsonRevue = JsonConvert.SerializeObject(revue, new CustomDateTimeConverter());
-            Console.WriteLine(jsonRevue);
+            Log.Debug(jsonRevue);
             try
             {
                 List<Revue> liste = TraitementRecup<Revue>(PUT, "revue", "champs=" + jsonRevue);
@@ -532,7 +538,7 @@ namespace MediaTekDocuments.dal
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Log.Error(ex.Message);
             }
             return false;
         }
@@ -545,7 +551,7 @@ namespace MediaTekDocuments.dal
         public bool SupprimerRevue(Revue revue)
         {
             String jsonRevue = JsonConvert.SerializeObject(revue, new CustomDateTimeConverter());
-            Console.WriteLine(jsonRevue);
+            Log.Debug(jsonRevue);
             try
             {
                 List<Revue> liste = TraitementRecup<Revue>(DELETE, "revue", "champs=" + jsonRevue);
@@ -553,7 +559,7 @@ namespace MediaTekDocuments.dal
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Log.Error(ex.Message);
             }
             return false;
         }
@@ -611,7 +617,7 @@ namespace MediaTekDocuments.dal
         public bool AjouterAbonnement(Abonnement abonnement)
         {
             String jsonAbonnement = JsonConvert.SerializeObject(abonnement, new CustomDateTimeConverter());
-            Console.WriteLine(jsonAbonnement);
+            Log.Debug(jsonAbonnement);
             try
             {
                 List<Abonnement> liste = TraitementRecup<Abonnement>(POST, "abonnement", "champs=" + jsonAbonnement);
@@ -619,7 +625,7 @@ namespace MediaTekDocuments.dal
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Log.Error(ex.Message);
             }
             return false;
         }
@@ -638,7 +644,7 @@ namespace MediaTekDocuments.dal
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Log.Error(ex.Message);
             }
             return false;
         }
@@ -689,7 +695,7 @@ namespace MediaTekDocuments.dal
         /// <returns>liste d'objets récupérés (ou liste vide)</returns>
         private List<T> TraitementRecup<T> (String methode, String message, String parametres)
         {
-            Console.WriteLine("REQUETE : " + methode + ", " + message + ", " + parametres);
+            Log.Debug("REQUETE : " + methode + ", " + message + ", " + parametres);
             // trans
             List<T> liste = new List<T>();
             try
@@ -709,12 +715,12 @@ namespace MediaTekDocuments.dal
                 }
                 else
                 {
-                    Console.WriteLine("code erreur = " + code + " message = " + (String)retour["message"]);
+                    Log.Error("code erreur = " + code + " message = " + (String)retour["message"]);
                 }
             }catch(Exception e)
             {
-                Console.WriteLine("Erreur lors de l'accès à l'API : "+e.Message);
-                Console.WriteLine("Erreur complète: " + e.ToString());
+                Log.Error("Erreur lors de l'accès à l'API : "+e.Message);
+                Log.Error("Erreur complete : " + e.ToString());
                 Environment.Exit(0);
             }
             return liste;
