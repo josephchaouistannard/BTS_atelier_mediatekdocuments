@@ -661,7 +661,7 @@ namespace MediaTekDocuments.dal
         /// </summary>
         /// <param name="pwdPlain"></param>
         /// <returns></returns>
-        private string HashWithSha256(string pwdPlain)
+        private static string HashWithSha256(string pwdPlain)
         {
             using (SHA256 sha256Hash = SHA256.Create())
             {
@@ -726,10 +726,12 @@ namespace MediaTekDocuments.dal
         /// <param name="nom"></param>
         /// <param name="valeur"></param>
         /// <returns>couple au format json</returns>
-        private String convertToJson(Object nom, Object valeur)
+        private static String convertToJson(Object nom, Object valeur)
         {
-            Dictionary<Object, Object> dictionary = new Dictionary<Object, Object>();
-            dictionary.Add(nom, valeur);
+            Dictionary<Object, Object> dictionary = new Dictionary<Object, Object>
+            {
+                { nom, valeur }
+            };
             return JsonConvert.SerializeObject(dictionary);
         }
 
