@@ -86,7 +86,6 @@ namespace MediaTekDocuments.manager
                         Content = content
                     };
                     httpResponse = httpClient.SendAsync(request).Result;
-                    //httpResponse = httpClient.DeleteAsync(message).Result;
                     break;
                 // methode incorrecte
                 default:

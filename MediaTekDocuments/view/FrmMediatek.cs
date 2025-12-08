@@ -43,7 +43,7 @@ namespace MediaTekDocuments.view
         /// <param name="lesCategories">liste des objets de type Genre ou Public ou Rayon</param>
         /// <param name="bdg">bindingsource contenant les informations</param>
         /// <param name="cbx">combobox à remplir</param>
-        public void RemplirComboCategorie(List<Categorie> lesCategories, BindingSource bdg, ComboBox cbx)
+        public static void RemplirComboCategorie(List<Categorie> lesCategories, BindingSource bdg, ComboBox cbx)
         {
             bdg.DataSource = lesCategories;
             cbx.DataSource = bdg;
@@ -59,7 +59,7 @@ namespace MediaTekDocuments.view
         /// <param name="lesSuivis"></param>
         /// <param name="bdg"></param>
         /// <param name="cbx"></param>
-        private void RemplirComboSuivi(List<Suivi> lesSuivis, BindingSource bdg, ComboBox cbx)
+        private static void RemplirComboSuivi(List<Suivi> lesSuivis, BindingSource bdg, ComboBox cbx)
         {
             bdg.DataSource = lesSuivis;
             cbx.DataSource = bdg;
@@ -75,7 +75,7 @@ namespace MediaTekDocuments.view
         /// <param name="lesEtats"></param>
         /// <param name="bdg"></param>
         /// <param name="cbx"></param>
-        private void RemplirComboEtat(List<Etat> lesEtats, BindingSource bdg, ComboBox cbx)
+        private static void RemplirComboEtat(List<Etat> lesEtats, BindingSource bdg, ComboBox cbx)
         {
             bdg.DataSource = lesEtats;
             cbx.DataSource = bdg;
@@ -90,7 +90,7 @@ namespace MediaTekDocuments.view
         /// </summary>
         /// <param name="txbChemin"></param>
         /// <param name="image"></param>
-        private void parcourirImage(TextBox txbChemin, PictureBox image)
+        private void ParcourirImage(TextBox txbChemin, PictureBox image)
         {
             string filePath = "";
             OpenFileDialog openFileDialog = new OpenFileDialog()
@@ -637,65 +637,45 @@ namespace MediaTekDocuments.view
         private void btnLivresEnregistrer_Click(object sender, EventArgs e)
         {
             string mode = btnLivresEnregistrer.Text;
-            if (mode == "Ajouter" || mode == "Modifier")
-            {
-                string validationMessage = "";
-                Genre genre = bdgGenres.Cast<Genre>()
-                    .FirstOrDefault(g => g.Libelle.Equals(txbLivresGenre.Text));
-                if (genre is null)
-                {
-                    validationMessage += "Saisir un genre valid. ";
-                }
-                Public lePublic = bdgPublics.Cast<Public>()
-                    .FirstOrDefault(p => p.Libelle.Equals(txbLivresPublic.Text));
-                if (lePublic is null)
-                {
-                    validationMessage += "Saisir un public valid. ";
-                }
-                Rayon rayon = bdgRayons.Cast<Rayon>()
-                    .FirstOrDefault(r => r.Libelle.Equals(txbLivresRayon.Text));
-                if (rayon is null)
-                {
-                    validationMessage += "Saisir un rayon valid. ";
-                }
-                
-                
-                if (validationMessage != "")
-                {
-                    MessageBox.Show(
-                        validationMessage,
-                        "Info",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Information
-                    );
-                    validationMessage = "";
 
-                } else
+            string validationMessage = "";
+            Genre genre = bdgGenres.Cast<Genre>()
+                .FirstOrDefault(g => g.Libelle.Equals(txbLivresGenre.Text));
+            if (genre is null)
+            {
+                validationMessage += "Saisir un genre valid. ";
+            }
+            Public lePublic = bdgPublics.Cast<Public>()
+                .FirstOrDefault(p => p.Libelle.Equals(txbLivresPublic.Text));
+            if (lePublic is null)
+            {
+                validationMessage += "Saisir un public valid. ";
+            }
+            Rayon rayon = bdgRayons.Cast<Rayon>()
+                .FirstOrDefault(r => r.Libelle.Equals(txbLivresRayon.Text));
+            if (rayon is null)
+            {
+                validationMessage += "Saisir un rayon valid. ";
+            }
+
+
+            if (validationMessage != "")
+            {
+                MessageBox.Show(
+                    validationMessage,
+                    "Info",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information
+                );
+            }
+            else
+            {
+                try
                 {
-                    try
+                    if (mode == "Ajouter")
                     {
-                        if (mode == "Ajouter")
-                        {
-                            Livre livre = new Livre(
-                                id: null,
-                                titre: txbLivresTitre.Text,
-                                image: txbLivresImage.Text,
-                                isbn: txbLivresIsbn.Text,
-                                auteur: txbLivresAuteur.Text,
-                                collection: txbLivresCollection.Text,
-                                idGenre: genre.Id,
-                                genre: genre.Libelle,
-                                idPublic: lePublic.Id,
-                                lePublic: lePublic.Libelle,
-                                idRayon: rayon.Id,
-                                rayon: rayon.Libelle
-                            );
-                            this.controller.AjouterLivre(livre);
-                        }
-                        else
-                        {
-                            Livre livre = new Livre(
-                            id: ((Livre)bdgLivresListe.Current).Id,
+                        Livre livre = new Livre(
+                            id: null,
                             titre: txbLivresTitre.Text,
                             image: txbLivresImage.Text,
                             isbn: txbLivresIsbn.Text,
@@ -707,23 +687,41 @@ namespace MediaTekDocuments.view
                             lePublic: lePublic.Libelle,
                             idRayon: rayon.Id,
                             rayon: rayon.Libelle
-                            );
-                            this.controller.ModifierLivre(livre);
-                        }
-                        ModeAjoutModifLivre(false);
-                        TabLivres_Enter(null, null);
-                    } catch(Exception ex)
-                    {
-                        MessageBox.Show(
-                            ex.ToString(),
-                            "Erreur",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Error
                         );
+                        this.controller.AjouterLivre(livre);
                     }
-                    
+                    else
+                    {
+                        Livre livre = new Livre(
+                        id: ((Livre)bdgLivresListe.Current).Id,
+                        titre: txbLivresTitre.Text,
+                        image: txbLivresImage.Text,
+                        isbn: txbLivresIsbn.Text,
+                        auteur: txbLivresAuteur.Text,
+                        collection: txbLivresCollection.Text,
+                        idGenre: genre.Id,
+                        genre: genre.Libelle,
+                        idPublic: lePublic.Id,
+                        lePublic: lePublic.Libelle,
+                        idRayon: rayon.Id,
+                        rayon: rayon.Libelle
+                        );
+                        this.controller.ModifierLivre(livre);
+                    }
+                    ModeAjoutModifLivre(false);
+                    TabLivres_Enter(null, null);
                 }
-            }                
+                catch (Exception ex)
+                {
+                    MessageBox.Show(
+                        ex.ToString(),
+                        "Erreur",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error
+                    );
+                }
+
+            }             
         }
 
         /// <summary>
@@ -783,7 +781,7 @@ namespace MediaTekDocuments.view
         /// <param name="e"></param>
         private void btnLivresParcourir_Click(object sender, EventArgs e)
         {
-            parcourirImage(txbLivresImage, pcbLivresImage);
+            ParcourirImage(txbLivresImage, pcbLivresImage);
         }
         #endregion
 
@@ -1313,100 +1311,96 @@ namespace MediaTekDocuments.view
         private void BtnDvdEnregistrer_Click(object sender, EventArgs e)
         {
             string mode = btnDvdEnregistrer.Text;
-            if (mode == "Ajouter" || mode == "Modifier")
+
+            string validationMessage = "";
+            Genre genre = bdgGenres.Cast<Genre>()
+                .FirstOrDefault(g => g.Libelle.Equals(txbDvdGenre.Text));
+            if (genre is null)
             {
-                string validationMessage = "";
-                Genre genre = bdgGenres.Cast<Genre>()
-                    .FirstOrDefault(g => g.Libelle.Equals(txbDvdGenre.Text));
-                if (genre is null)
-                {
-                    validationMessage += "Saisir un genre valid. ";
-                }
-                Public lePublic = bdgPublics.Cast<Public>()
-                    .FirstOrDefault(p => p.Libelle.Equals(txbDvdPublic.Text));
-                if (lePublic is null)
-                {
-                    validationMessage += "Saisir un public valid. ";
-                }
-                Rayon rayon = bdgRayons.Cast<Rayon>()
-                    .FirstOrDefault(r => r.Libelle.Equals(txbDvdRayon.Text));
-                if (rayon is null)
-                {
-                    validationMessage += "Saisir un rayon valid. ";
-                }
+                validationMessage += "Saisir un genre valid. ";
+            }
+            Public lePublic = bdgPublics.Cast<Public>()
+                .FirstOrDefault(p => p.Libelle.Equals(txbDvdPublic.Text));
+            if (lePublic is null)
+            {
+                validationMessage += "Saisir un public valid. ";
+            }
+            Rayon rayon = bdgRayons.Cast<Rayon>()
+                .FirstOrDefault(r => r.Libelle.Equals(txbDvdRayon.Text));
+            if (rayon is null)
+            {
+                validationMessage += "Saisir un rayon valid. ";
+            }
 
-                int? duree = null;
-                if (int.TryParse(txbDvdDuree.Text, out int result))
-                {
-                    duree = result;
-                }
+            int? duree = null;
+            if (int.TryParse(txbDvdDuree.Text, out int result))
+            {
+                duree = result;
+            }
 
-                if (validationMessage != "")
+            if (validationMessage != "")
+            {
+                MessageBox.Show(
+                    validationMessage,
+                    "Info",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information
+                );
+            }
+            else
+            {
+                try
+                {
+
+                    if (mode == "Ajouter")
+                    {
+                        Dvd dvd = new Dvd(
+                            id: null,
+                            titre: txbDvdTitre.Text,
+                            image: txbDvdImage.Text,
+                            duree: duree ?? 0,
+                            realisateur: txbDvdRealisateur.Text,
+                            synopsis: txbDvdSynopsis.Text,
+                            idGenre: genre.Id,
+                            genre: genre.Libelle,
+                            idPublic: lePublic.Id,
+                            lePublic: lePublic.Libelle,
+                            idRayon: rayon.Id,
+                            rayon: rayon.Libelle
+                        );
+                        this.controller.AjouterDvd(dvd);
+                    }
+                    else
+                    {
+                        Dvd dvd = new Dvd(
+                            id: ((Dvd)bdgDvdListe.Current).Id,
+                            titre: txbDvdTitre.Text,
+                            image: txbDvdImage.Text,
+                            duree: duree ?? 0,
+                            realisateur: txbDvdRealisateur.Text,
+                            synopsis: txbDvdSynopsis.Text,
+                            idGenre: genre.Id,
+                            genre: genre.Libelle,
+                            idPublic: lePublic.Id,
+                            lePublic: lePublic.Libelle,
+                            idRayon: rayon.Id,
+                            rayon: rayon.Libelle
+                        );
+                        this.controller.ModifierDvd(dvd);
+                    }
+                    ModeAjoutModifDvd(false);
+                    tabDvd_Enter(null, null);
+                }
+                catch (Exception ex)
                 {
                     MessageBox.Show(
-                        validationMessage,
-                        "Info",
+                        ex.ToString(),
+                        "Erreur",
                         MessageBoxButtons.OK,
-                        MessageBoxIcon.Information
+                        MessageBoxIcon.Error
                     );
-                    validationMessage = "";
-
                 }
-                else
-                {
-                    try
-                    {
-                        
-                        if (mode == "Ajouter")
-                        {
-                            Dvd dvd = new Dvd(
-                                id: null,
-                                titre: txbDvdTitre.Text,
-                                image: txbDvdImage.Text,
-                                duree: duree ?? 0,
-                                realisateur: txbDvdRealisateur.Text,
-                                synopsis: txbDvdSynopsis.Text,
-                                idGenre: genre.Id,
-                                genre: genre.Libelle,
-                                idPublic: lePublic.Id,
-                                lePublic: lePublic.Libelle,
-                                idRayon: rayon.Id,
-                                rayon: rayon.Libelle
-                            );
-                            this.controller.AjouterDvd(dvd);
-                        }
-                        else
-                        {
-                            Dvd dvd = new Dvd(
-                                id: ((Dvd)bdgDvdListe.Current).Id,
-                                titre: txbDvdTitre.Text,
-                                image: txbDvdImage.Text,
-                                duree: duree ?? 0,
-                                realisateur: txbDvdRealisateur.Text,
-                                synopsis: txbDvdSynopsis.Text,
-                                idGenre: genre.Id,
-                                genre: genre.Libelle,
-                                idPublic: lePublic.Id,
-                                lePublic: lePublic.Libelle,
-                                idRayon: rayon.Id,
-                                rayon: rayon.Libelle
-                            );
-                            this.controller.ModifierDvd(dvd);
-                        }
-                        ModeAjoutModifDvd(false);
-                        tabDvd_Enter(null, null);
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show(
-                            ex.ToString(),
-                            "Erreur",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Error
-                        );
-                    }
 
-                }
             }
         }
 
@@ -1469,7 +1463,7 @@ namespace MediaTekDocuments.view
         /// <param name="e"></param>
         private void btnDvdParcourir_Click(object sender, EventArgs e)
         {
-            parcourirImage(txbDvdImage, pcbDvdImage);
+            ParcourirImage(txbDvdImage, pcbDvdImage);
         }
 
         #endregion
@@ -1859,70 +1853,50 @@ namespace MediaTekDocuments.view
         private void btnRevuesEnregistrer_Click(object sender, EventArgs e)
         {
             string mode = btnRevuesEnregistrer.Text;
-            if (mode == "Ajouter" || mode == "Modifier")
+
+            string validationMessage = "";
+            Genre genre = bdgGenres.Cast<Genre>()
+                .FirstOrDefault(g => g.Libelle.Equals(txbRevuesGenre.Text));
+            if (genre is null)
             {
-                string validationMessage = "";
-                Genre genre = bdgGenres.Cast<Genre>()
-                    .FirstOrDefault(g => g.Libelle.Equals(txbRevuesGenre.Text));
-                if (genre is null)
-                {
-                    validationMessage += "Saisir un genre valid. ";
-                }
-                Public lePublic = bdgPublics.Cast<Public>()
-                    .FirstOrDefault(p => p.Libelle.Equals(txbRevuesPublic.Text));
-                if (lePublic is null)
-                {
-                    validationMessage += "Saisir un public valid. ";
-                }
-                Rayon rayon = bdgRayons.Cast<Rayon>()
-                    .FirstOrDefault(r => r.Libelle.Equals(txbRevuesRayon.Text));
-                if (rayon is null)
-                {
-                    validationMessage += "Saisir un rayon valid. ";
-                }
+                validationMessage += "Saisir un genre valid. ";
+            }
+            Public lePublic = bdgPublics.Cast<Public>()
+                .FirstOrDefault(p => p.Libelle.Equals(txbRevuesPublic.Text));
+            if (lePublic is null)
+            {
+                validationMessage += "Saisir un public valid. ";
+            }
+            Rayon rayon = bdgRayons.Cast<Rayon>()
+                .FirstOrDefault(r => r.Libelle.Equals(txbRevuesRayon.Text));
+            if (rayon is null)
+            {
+                validationMessage += "Saisir un rayon valid. ";
+            }
 
-                int? delaiDispo = null;
-                if (int.TryParse(txbRevuesDateMiseADispo.Text, out int result))
-                {
-                    delaiDispo = result;
-                }
+            int? delaiDispo = null;
+            if (int.TryParse(txbRevuesDateMiseADispo.Text, out int result))
+            {
+                delaiDispo = result;
+            }
 
-                if (validationMessage != "")
+            if (validationMessage != "")
+            {
+                MessageBox.Show(
+                    validationMessage,
+                    "Info",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information
+                );
+            }
+            else
+            {
+                try
                 {
-                    MessageBox.Show(
-                        validationMessage,
-                        "Info",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Information
-                    );
-                    validationMessage = "";
-
-                }
-                else
-                {
-                    try
+                    if (mode == "Ajouter")
                     {
-                        if (mode == "Ajouter")
-                        {
-                            Revue revue = new Revue(
-                                id: null,
-                                titre: txbRevuesTitre.Text,
-                                image: txbRevuesImage.Text,
-                                periodicite: txbRevuesPeriodicite.Text,
-                                delaiMiseADispo: delaiDispo ?? 0,
-                                idGenre: genre.Id,
-                                genre: genre.Libelle,
-                                idPublic: lePublic.Id,
-                                lePublic: lePublic.Libelle,
-                                idRayon: rayon.Id,
-                                rayon: rayon.Libelle
-                            );
-                            this.controller.AjouterRevue(revue);
-                        }
-                        else
-                        {
-                            Revue revue = new Revue(
-                            id: ((Revue)bdgRevuesListe.Current).Id,
+                        Revue revue = new Revue(
+                            id: null,
                             titre: txbRevuesTitre.Text,
                             image: txbRevuesImage.Text,
                             periodicite: txbRevuesPeriodicite.Text,
@@ -1933,22 +1907,37 @@ namespace MediaTekDocuments.view
                             lePublic: lePublic.Libelle,
                             idRayon: rayon.Id,
                             rayon: rayon.Libelle
-                            );
-                            this.controller.ModifierRevue(revue);
-                        }
-                        ModeAjoutModifRevue(false);
-                        tabRevues_Enter(null, null);
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show(
-                            ex.ToString(),
-                            "Erreur",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Error
                         );
+                        this.controller.AjouterRevue(revue);
                     }
-
+                    else
+                    {
+                        Revue revue = new Revue(
+                        id: ((Revue)bdgRevuesListe.Current).Id,
+                        titre: txbRevuesTitre.Text,
+                        image: txbRevuesImage.Text,
+                        periodicite: txbRevuesPeriodicite.Text,
+                        delaiMiseADispo: delaiDispo ?? 0,
+                        idGenre: genre.Id,
+                        genre: genre.Libelle,
+                        idPublic: lePublic.Id,
+                        lePublic: lePublic.Libelle,
+                        idRayon: rayon.Id,
+                        rayon: rayon.Libelle
+                        );
+                        this.controller.ModifierRevue(revue);
+                    }
+                    ModeAjoutModifRevue(false);
+                    tabRevues_Enter(null, null);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(
+                        ex.ToString(),
+                        "Erreur",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error
+                    );
                 }
             }
         }
@@ -2007,7 +1996,7 @@ namespace MediaTekDocuments.view
         /// <param name="e"></param>
         private void btnRevuesParcourir_Click(object sender, EventArgs e)
         {
-            parcourirImage(txbRevuesImage, pcbRevuesImage);
+            ParcourirImage(txbRevuesImage, pcbRevuesImage);
         }
         #endregion
 
@@ -2430,8 +2419,7 @@ namespace MediaTekDocuments.view
         /// </summary>
         private void RemplirZoneCommandesLivreCom()
         {
-            CommandeDocument commande = bdgCommandesLivreListe.Current as CommandeDocument;
-            if (!(commande is null))
+            if (bdgCommandesLivreListe.Current is CommandeDocument commande)
             {
                 txbCommandesLivresComId.Text = commande.Id;
                 dtpCommandesLivresComDate.Value = commande.DateCommande;
@@ -2641,83 +2629,79 @@ namespace MediaTekDocuments.view
         private void btnCommandesLivresEnregistrer_Click(object sender, EventArgs e)
         {
             string mode = btnCommandesLivresEnregistrer.Text;
-            if (mode == "Ajouter" || mode == "Modifier")
-            {
-                string validationMessage = "";
-                Console.WriteLine(cbxCommandesLivresComSuivi.Text);
-                Suivi suivi = bdgSuivis.Cast<Suivi>()
-                    .FirstOrDefault(r => r.Libelle.Equals(cbxCommandesLivresComSuivi.Text));
-                if (suivi is null)
-                {
-                    validationMessage += "Choisir une étape de suivi valide. ";
-                }
-                string montant = txbCommandesLivresComMontant.Text;
-                if (mode == "Ajouter" && !Regex.IsMatch(montant, @"^\d+(,\d{1,2})?$"))
-                {
-                    validationMessage += "Veuillez saisir un montant dans format 'XXXX,XX' ";
-                }
-                string numDoc = txbCommandesLivresComNumDoc.Text;
-                if (mode == "Ajouter" && !Regex.IsMatch(numDoc, @"^0\d{4}$"))
-                {
-                    validationMessage += "Veuillez saisir un numéro de document dans format '0XXXX' ";
-                }
 
-                if (validationMessage != "")
+            string validationMessage = "";
+            Console.WriteLine(cbxCommandesLivresComSuivi.Text);
+            Suivi suivi = bdgSuivis.Cast<Suivi>()
+                .FirstOrDefault(r => r.Libelle.Equals(cbxCommandesLivresComSuivi.Text));
+            if (suivi is null)
+            {
+                validationMessage += "Choisir une étape de suivi valide. ";
+            }
+            string montant = txbCommandesLivresComMontant.Text;
+            if (mode == "Ajouter" && !Regex.IsMatch(montant, @"^\d+(,\d{1,2})?$"))
+            {
+                validationMessage += "Veuillez saisir un montant dans format 'XXXX,XX' ";
+            }
+            string numDoc = txbCommandesLivresComNumDoc.Text;
+            if (mode == "Ajouter" && !Regex.IsMatch(numDoc, @"^0\d{4}$"))
+            {
+                validationMessage += "Veuillez saisir un numéro de document dans format '0XXXX' ";
+            }
+
+            if (validationMessage != "")
+            {
+                MessageBox.Show(
+                    validationMessage,
+                    "Info",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information
+                );
+            }
+            else
+            {
+                try
+                {
+                    if (mode == "Ajouter")
+                    {
+                        CommandeDocument commande = new CommandeDocument(
+                            id: null,
+                            nbExemplaire: (int)numCommandesLivresComExemplaires.Value,
+                            idLivreDvd: txbCommandesLivresComNumDoc.Text,
+                            idSuivi: suivi.Id,
+                            suivi: suivi.Libelle,
+                            dateCommande: dtpCommandesLivresComDate.Value,
+                            montant: Double.Parse(txbCommandesLivresComMontant.Text)
+                        );
+                        this.controller.AjouterCommandeDocument(commande);
+                    }
+                    else
+                    {
+                        CommandeDocument commande = new CommandeDocument(
+                            id: txbCommandesLivresComId.Text,
+                            nbExemplaire: (int)numCommandesLivresComExemplaires.Value,
+                            idLivreDvd: txbCommandesLivresComNumDoc.Text,
+                            idSuivi: suivi.Id,
+                            suivi: suivi.Libelle,
+                            dateCommande: dtpCommandesLivresComDate.Value,
+                            montant: Double.Parse(txbCommandesLivresComMontant.Text)
+                        );
+                        this.controller.ModifierCommandeDocument(commande);
+                    }
+                    ModeAjoutCommandeLivre(false);
+                    ModeModifCommandeLivre(false);
+                    tabCommandesLivre_Enter(null, null);
+                }
+                catch (Exception ex)
                 {
                     MessageBox.Show(
-                        validationMessage,
-                        "Info",
+                        ex.ToString(),
+                        "Erreur",
                         MessageBoxButtons.OK,
-                        MessageBoxIcon.Information
+                        MessageBoxIcon.Error
                     );
-                    validationMessage = "";
-
                 }
-                else
-                {
-                    try
-                    {
-                        if (mode == "Ajouter")
-                        {
-                            CommandeDocument commande = new CommandeDocument(
-                                id: null,
-                                nbExemplaire: (int)numCommandesLivresComExemplaires.Value,
-                                idLivreDvd: txbCommandesLivresComNumDoc.Text,
-                                idSuivi: suivi.Id,
-                                suivi: suivi.Libelle,
-                                dateCommande: dtpCommandesLivresComDate.Value,
-                                montant: Double.Parse(txbCommandesLivresComMontant.Text)
-                            );
-                            this.controller.AjouterCommandeDocument(commande);
-                        }
-                        else
-                        {
-                            CommandeDocument commande = new CommandeDocument(
-                                id: txbCommandesLivresComId.Text,
-                                nbExemplaire: (int)numCommandesLivresComExemplaires.Value,
-                                idLivreDvd: txbCommandesLivresComNumDoc.Text,
-                                idSuivi: suivi.Id,
-                                suivi: suivi.Libelle,
-                                dateCommande: dtpCommandesLivresComDate.Value,
-                                montant: Double.Parse(txbCommandesLivresComMontant.Text)
-                            );
-                            this.controller.ModifierCommandeDocument(commande);
-                        }
-                        ModeAjoutCommandeLivre(false);
-                        ModeModifCommandeLivre(false);
-                        tabCommandesLivre_Enter(null, null);
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show(
-                            ex.ToString(),
-                            "Erreur",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Error
-                        );
-                    }
 
-                }
             }
         }
 
@@ -2789,7 +2773,7 @@ namespace MediaTekDocuments.view
             txbCommandesDvdInfosSynopsis.Text = "";
             txbCommandesDvdInfosDuree.Text = "";
             txbCommandesDvdInfosNumDoc.Text = "";
-            txbCommandesDvdInfosGenre.Text = ""; ;
+            txbCommandesDvdInfosGenre.Text = "";
             txbCommandesDvdInfosPublic.Text = "";
             txbCommandesDvdInfosRayon.Text = "";
             txbCommandesDvdInfosTitre.Text = "";
@@ -2800,8 +2784,7 @@ namespace MediaTekDocuments.view
         /// </summary>
         private void RemplirZoneCommandesDvdCom()
         {
-            CommandeDocument commande = bdgCommandesDvdListe.Current as CommandeDocument;
-            if (!(commande is null))
+            if (bdgCommandesDvdListe.Current is CommandeDocument commande)
             {
                 txbCommandesDvdComId.Text = commande.Id;
                 dtpCommandesDvdComDate.Value = commande.DateCommande;
@@ -2977,82 +2960,78 @@ namespace MediaTekDocuments.view
         private void btnCommandesDvdEnregistrer_Click(object sender, EventArgs e)
         {
             string mode = btnCommandesDvdEnregistrer.Text;
-            if (mode == "Ajouter" || mode == "Modifier")
-            {
-                string validationMessage = "";
-                Suivi suivi = bdgSuivis.Cast<Suivi>()
-                    .FirstOrDefault(r => r.Libelle.Equals(cbxCommandesDvdComSuivi.Text));
-                if (suivi is null)
-                {
-                    validationMessage += "Choisir une étape de suivi valide. ";
-                }
-                string montant = txbCommandesDvdComMontant.Text;
-                if (mode == "Ajouter" && !Regex.IsMatch(montant, @"^\d+(,\d{1,2})?$"))
-                {
-                    validationMessage += "Veuillez saisir un montant dans format 'XXXX,XX' ";
-                }
-                string numDoc = txbCommandesDvdComNumDoc.Text;
-                if (mode == "Ajouter" && !Regex.IsMatch(numDoc, @"^2\d{4}$"))
-                {
-                    validationMessage += "Veuillez saisir un numéro de document dans format '0XXXX' ";
-                }
 
-                if (validationMessage != "")
+            string validationMessage = "";
+            Suivi suivi = bdgSuivis.Cast<Suivi>()
+                .FirstOrDefault(r => r.Libelle.Equals(cbxCommandesDvdComSuivi.Text));
+            if (suivi is null)
+            {
+                validationMessage += "Choisir une étape de suivi valide. ";
+            }
+            string montant = txbCommandesDvdComMontant.Text;
+            if (mode == "Ajouter" && !Regex.IsMatch(montant, @"^\d+(,\d{1,2})?$"))
+            {
+                validationMessage += "Veuillez saisir un montant dans format 'XXXX,XX' ";
+            }
+            string numDoc = txbCommandesDvdComNumDoc.Text;
+            if (mode == "Ajouter" && !Regex.IsMatch(numDoc, @"^2\d{4}$"))
+            {
+                validationMessage += "Veuillez saisir un numéro de document dans format '0XXXX' ";
+            }
+
+            if (validationMessage != "")
+            {
+                MessageBox.Show(
+                    validationMessage,
+                    "Info",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information
+                );
+            }
+            else
+            {
+                try
+                {
+                    if (mode == "Ajouter")
+                    {
+                        CommandeDocument commande = new CommandeDocument(
+                            id: null,
+                            nbExemplaire: (int)numCommandesDvdComNbExemplaire.Value,
+                            idLivreDvd: txbCommandesDvdComNumDoc.Text,
+                            idSuivi: suivi.Id,
+                            suivi: suivi.Libelle,
+                            dateCommande: dtpCommandesDvdComDate.Value,
+                            montant: Double.Parse(txbCommandesDvdComMontant.Text)
+                        );
+                        this.controller.AjouterCommandeDocument(commande);
+                    }
+                    else
+                    {
+                        CommandeDocument commande = new CommandeDocument(
+                            id: txbCommandesDvdComId.Text,
+                            nbExemplaire: (int)numCommandesDvdComNbExemplaire.Value,
+                            idLivreDvd: txbCommandesDvdComNumDoc.Text,
+                            idSuivi: suivi.Id,
+                            suivi: suivi.Libelle,
+                            dateCommande: dtpCommandesDvdComDate.Value,
+                            montant: Double.Parse(txbCommandesDvdComMontant.Text)
+                        );
+                        this.controller.ModifierCommandeDocument(commande);
+                    }
+                    ModeAjoutCommandeDvd(false);
+                    ModeModifCommandeDvd(false);
+                    tabCommandesDvd_Enter(null, null);
+                }
+                catch (Exception ex)
                 {
                     MessageBox.Show(
-                        validationMessage,
-                        "Info",
+                        ex.ToString(),
+                        "Erreur",
                         MessageBoxButtons.OK,
-                        MessageBoxIcon.Information
+                        MessageBoxIcon.Error
                     );
-                    validationMessage = "";
-
                 }
-                else
-                {
-                    try
-                    {
-                        if (mode == "Ajouter")
-                        {
-                            CommandeDocument commande = new CommandeDocument(
-                                id: null,
-                                nbExemplaire: (int)numCommandesDvdComNbExemplaire.Value,
-                                idLivreDvd: txbCommandesDvdComNumDoc.Text,
-                                idSuivi: suivi.Id,
-                                suivi: suivi.Libelle,
-                                dateCommande: dtpCommandesDvdComDate.Value,
-                                montant: Double.Parse(txbCommandesDvdComMontant.Text)
-                            );
-                            this.controller.AjouterCommandeDocument(commande);
-                        }
-                        else
-                        {
-                            CommandeDocument commande = new CommandeDocument(
-                                id: txbCommandesDvdComId.Text,
-                                nbExemplaire: (int)numCommandesDvdComNbExemplaire.Value,
-                                idLivreDvd: txbCommandesDvdComNumDoc.Text,
-                                idSuivi: suivi.Id,
-                                suivi: suivi.Libelle,
-                                dateCommande: dtpCommandesDvdComDate.Value,
-                                montant: Double.Parse(txbCommandesDvdComMontant.Text)
-                            );
-                            this.controller.ModifierCommandeDocument(commande);
-                        }
-                        ModeAjoutCommandeDvd(false);
-                        ModeModifCommandeDvd(false);
-                        tabCommandesDvd_Enter(null, null);
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show(
-                            ex.ToString(),
-                            "Erreur",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Error
-                        );
-                    }
 
-                }
             }
         }
 
@@ -3136,7 +3115,7 @@ namespace MediaTekDocuments.view
             {
                 Revue revue = controller.GetRevue(id);
                 txbAbonnementsRevuesInfosNumRev.Text = revue.Id;
-                txbAbonnementsRevuesInfosDelaiMaD.Text = revue.DelaiMiseADispo.ToString(); ;
+                txbAbonnementsRevuesInfosDelaiMaD.Text = revue.DelaiMiseADispo.ToString();
                 txbAbonnementsRevuesInfosPeriodicite.Text = revue.Periodicite;
                 txbAbonnementsRevuesInfosGenre.Text = revue.Genre;
                 txbAbonnementsRevuesInfosPublic.Text = revue.Public;
@@ -3167,8 +3146,7 @@ namespace MediaTekDocuments.view
         /// </summary>
         private void RemplirZoneAbonnementsRevuesAb()
         {
-            Abonnement abonnement = bdgAbonnementsRevuesListe.Current as Abonnement;
-            if (!(abonnement is null))
+            if (bdgAbonnementsRevuesListe.Current is Abonnement abonnement)
             {
                 txbAbonnementsRevuesAbId.Text = abonnement.Id;
                 dtpAbonnementsRevuesAbDateCommande.Value = abonnement.DateCommande;
@@ -3323,8 +3301,6 @@ namespace MediaTekDocuments.view
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information
                 );
-                validationMessage = "";
-
             }
             else
             {
@@ -3398,7 +3374,7 @@ namespace MediaTekDocuments.view
         /// <param name="dateCommandeAb"></param>
         /// <param name="dateFinAbonnement"></param>
         /// <returns>true si dans abonnement, false sinon</returns>
-        public bool ParutionDansAbonnement(DateTime dateExemplaire, DateTime dateCommandeAb, DateTime dateFinAbonnement)
+        public static bool ParutionDansAbonnement(DateTime dateExemplaire, DateTime dateCommandeAb, DateTime dateFinAbonnement)
         {
             if (dateExemplaire >= dateCommandeAb && dateExemplaire <= dateFinAbonnement)
             {
