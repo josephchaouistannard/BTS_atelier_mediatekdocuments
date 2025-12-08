@@ -146,7 +146,7 @@ namespace MediaTekDocuments.dal
         /// <returns></returns>
         public Livre GetLivre(string id)
         {
-            String jsonId = convertToJson("id", id);
+            String jsonId = ConvertToJson("id", id);
             List<Livre> liste = TraitementRecup<Livre>(GET, "livre/" + jsonId, null);
             if (liste.Count > 0)
             {
@@ -172,7 +172,7 @@ namespace MediaTekDocuments.dal
         /// <returns></returns>
         public Dvd GetDvd(string id)
         {
-            String jsonId = convertToJson("id", id);
+            String jsonId = ConvertToJson("id", id);
             List<Dvd> liste = TraitementRecup<Dvd>(GET, "dvd/" + jsonId, null);
             if (liste.Count > 0)
             {
@@ -198,7 +198,7 @@ namespace MediaTekDocuments.dal
         /// <returns></returns>
         public List<CommandeDocument> GetAllCommandesDocument(string type)
         {
-            String jsonType = convertToJson("type", type);
+            String jsonType = ConvertToJson("type", type);
             List<CommandeDocument> lesCommandesDocument = TraitementRecup<CommandeDocument>(GET, "commandes/" + jsonType, null);
             return lesCommandesDocument;
         }
@@ -210,7 +210,7 @@ namespace MediaTekDocuments.dal
         /// <returns></returns>
         public List<CommandeDocument> GetCommandesDocument(string numDoc)
         {
-            String jsonId = convertToJson("id", numDoc);
+            String jsonId = ConvertToJson("id", numDoc);
             List<CommandeDocument> liste = TraitementRecup<CommandeDocument>(GET, "commandes/" + jsonId, null);
             return liste;
         }
@@ -264,7 +264,7 @@ namespace MediaTekDocuments.dal
         /// <returns></returns>
         public bool SupprimerCommandeDocument(CommandeDocument commande)
         {
-            String jsonId = convertToJson("id", commande.Id);
+            String jsonId = ConvertToJson("id", commande.Id);
             try
             {
                 List<Livre> liste = TraitementRecup<Livre>(DELETE, "commande/" + jsonId, null);
@@ -304,7 +304,7 @@ namespace MediaTekDocuments.dal
         /// <returns>Liste d'objets Exemplaire</returns>
         public List<Exemplaire> GetExemplairesDocument(string idDocument)
         {
-            String jsonIdDocument = convertToJson("id", idDocument);
+            String jsonIdDocument = ConvertToJson("id", idDocument);
             List<Exemplaire> lesExemplaires = TraitementRecup<Exemplaire>(GET, "exemplaire/" + jsonIdDocument, null);
             return lesExemplaires;
         }
@@ -574,7 +574,7 @@ namespace MediaTekDocuments.dal
         /// <returns></returns>
         public List<Abonnement> GetAbonnementsRevue(string id)
         {
-            String jsonId = convertToJson("id", id);
+            String jsonId = ConvertToJson("id", id);
             List<Abonnement> liste = TraitementRecup<Abonnement>(GET, "abonnements/" + jsonId, null);
             return liste;
         }
@@ -584,7 +584,7 @@ namespace MediaTekDocuments.dal
         /// <returns></returns>
         public List<Abonnement> GetAbonnementsAvecFinProche()
         {
-            String jsonFin = convertToJson("fin", "1");
+            String jsonFin = ConvertToJson("fin", "1");
             List<Abonnement> liste = TraitementRecup<Abonnement>(GET, "abonnements/" + jsonFin, null);
             return liste;
         }
@@ -595,7 +595,7 @@ namespace MediaTekDocuments.dal
         /// <returns></returns>
         public Revue GetRevue(string id)
         {
-            String jsonId = convertToJson("id", id);
+            String jsonId = ConvertToJson("id", id);
             List<Revue> liste = TraitementRecup<Revue>(GET, "revue/" + jsonId, null);
             if (liste.Count > 0)
             {
@@ -630,7 +630,7 @@ namespace MediaTekDocuments.dal
         /// <returns></returns>
         public bool SupprimerAbonnement(Abonnement abonnement)
         {
-            String jsonId = convertToJson("id", abonnement.Id);
+            String jsonId = ConvertToJson("id", abonnement.Id);
             try
             {
                 List<Abonnement> liste = TraitementRecup<Abonnement>(DELETE, "abonnement/" + jsonId, null);
@@ -726,7 +726,7 @@ namespace MediaTekDocuments.dal
         /// <param name="nom"></param>
         /// <param name="valeur"></param>
         /// <returns>couple au format json</returns>
-        private static String convertToJson(Object nom, Object valeur)
+        private static String ConvertToJson(Object nom, Object valeur)
         {
             Dictionary<Object, Object> dictionary = new Dictionary<Object, Object>
             {

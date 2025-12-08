@@ -90,7 +90,7 @@ namespace MediaTekDocuments.view
         /// </summary>
         /// <param name="txbChemin"></param>
         /// <param name="image"></param>
-        private void parcourirImage(TextBox txbChemin, PictureBox image)
+        private void ParcourirImage(TextBox txbChemin, PictureBox image)
         {
             string filePath = "";
             OpenFileDialog openFileDialog = new OpenFileDialog()
@@ -781,7 +781,7 @@ namespace MediaTekDocuments.view
         /// <param name="e"></param>
         private void btnLivresParcourir_Click(object sender, EventArgs e)
         {
-            parcourirImage(txbLivresImage, pcbLivresImage);
+            ParcourirImage(txbLivresImage, pcbLivresImage);
         }
         #endregion
 
@@ -1463,7 +1463,7 @@ namespace MediaTekDocuments.view
         /// <param name="e"></param>
         private void btnDvdParcourir_Click(object sender, EventArgs e)
         {
-            parcourirImage(txbDvdImage, pcbDvdImage);
+            ParcourirImage(txbDvdImage, pcbDvdImage);
         }
 
         #endregion
@@ -1996,7 +1996,7 @@ namespace MediaTekDocuments.view
         /// <param name="e"></param>
         private void btnRevuesParcourir_Click(object sender, EventArgs e)
         {
-            parcourirImage(txbRevuesImage, pcbRevuesImage);
+            ParcourirImage(txbRevuesImage, pcbRevuesImage);
         }
         #endregion
 
