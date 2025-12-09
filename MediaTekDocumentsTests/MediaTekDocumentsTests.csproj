@@ -51,6 +51,20 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="model\AbonnementTests.cs" />
+    <Compile Include="model\CategorieTests.cs" />
+    <Compile Include="model\CommandeDocumentTests.cs" />
+    <Compile Include="model\DocumentTests.cs" />
+    <Compile Include="model\DvdTests.cs" />
+    <Compile Include="model\EtatTests.cs" />
+    <Compile Include="model\ExemplaireTests.cs" />
+    <Compile Include="model\GenreTests.cs" />
+    <Compile Include="model\LivreTests.cs" />
+    <Compile Include="model\PublicTests.cs" />
+    <Compile Include="model\RayonTests.cs" />
+    <Compile Include="model\RevueTests.cs" />
+    <Compile Include="model\SuiviTests.cs" />
+    <Compile Include="model\UtilisateurTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="view\FrmMediatekTests.cs" />
   </ItemGroup>
