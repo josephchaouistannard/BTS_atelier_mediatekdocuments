@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36717.8 d17.14
+VisualStudioVersion = 17.14.36717.8
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaTekDocuments", "MediaTekDocuments\MediaTekDocuments.csproj", "{75DE903D-6147-4E14-BBE0-FA20CD1F9840}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaTekDocumentsTests", "MediaTekDocumentsTests\MediaTekDocumentsTests.csproj", "{C8203AE7-EEB4-444B-BA1B-7E1388687A5C}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "MediaTekDocuments Setup", "MediaTekDocuments Setup\MediaTekDocuments Setup.vdproj", "{0EFD8AB1-FA48-29E6-7FA8-6A430146AB58}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{C8203AE7-EEB4-444B-BA1B-7E1388687A5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C8203AE7-EEB4-444B-BA1B-7E1388687A5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C8203AE7-EEB4-444B-BA1B-7E1388687A5C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0EFD8AB1-FA48-29E6-7FA8-6A430146AB58}.Debug|Any CPU.ActiveCfg = Debug
+		{0EFD8AB1-FA48-29E6-7FA8-6A430146AB58}.Debug|Any CPU.Build.0 = Debug
+		{0EFD8AB1-FA48-29E6-7FA8-6A430146AB58}.Release|Any CPU.ActiveCfg = Release
+		{0EFD8AB1-FA48-29E6-7FA8-6A430146AB58}.Release|Any CPU.Build.0 = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
