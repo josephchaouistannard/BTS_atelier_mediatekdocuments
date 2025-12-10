@@ -2598,7 +2598,7 @@ namespace MediaTekDocuments.view
             this.grpCommandesLivresInfo.Size = new System.Drawing.Size(544, 198);
             this.grpCommandesLivresInfo.TabIndex = 21;
             this.grpCommandesLivresInfo.TabStop = false;
-            this.grpCommandesLivresInfo.Text = "Informations du livre";
+            this.grpCommandesLivresInfo.Text = "Informations Livre";
             // 
             // txbCommandesLivresInfosIsbn
             // 
@@ -3036,7 +3036,7 @@ namespace MediaTekDocuments.view
             this.grpCommandesDvdInfos.Size = new System.Drawing.Size(544, 198);
             this.grpCommandesDvdInfos.TabIndex = 21;
             this.grpCommandesDvdInfos.TabStop = false;
-            this.grpCommandesDvdInfos.Text = "Informations du livre";
+            this.grpCommandesDvdInfos.Text = "Informations DVD";
             // 
             // txbCommandesDvdInfosDuree
             // 
