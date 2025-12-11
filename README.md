@@ -136,3 +136,4 @@ Ce mode opératoire permet d'installer l'application pour pouvoir travailler des
 - Installer Visual Studio 2022 entreprise et les extension Specflow et newtonsoft.json (pour ce dernier, voir l'article "Accéder à une API REST à partir d'une application C#" dans le wiki de ce dépôt : consulter juste le début pour la configuration, car la suite permet de comprendre le code existant).<br>
 - Télécharger le code et le dézipper puis renommer le dossier en "mediatekdocuments".<br>
 - Récupérer et installer l'API REST nécessaire (https://github.com/josephchaouistannard/BTS_atelier_mediatekdocuments_api) ainsi que la base de données (les explications sont données dans le readme correspondant).
+- Que vous utilisez l'API et la BDD en local ou les versions déployées (à https://mediatekdocuments-api.josephchaouistannard.com), vérifié l'URL de l'API dans la classe 'Access' et le login et mot de passe dans 'App.config'.
