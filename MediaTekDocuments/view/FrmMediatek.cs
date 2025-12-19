@@ -593,6 +593,7 @@ namespace MediaTekDocuments.view
             }
             btnLivresAnnuler.Visible = active;
             btnLivresEnregistrer.Visible = active;
+            btnLivresParcourir.Visible = active;
             txbLivresNumero.ReadOnly = true; // numéro jamais modifié
             if (active)
             {
@@ -1265,6 +1266,7 @@ namespace MediaTekDocuments.view
             }
             btnDvdAnnuler.Visible = active;
             btnDvdEnregistrer.Visible = active;
+            btnDvdParcourir.Visible = active;
             txbDvdNumero.ReadOnly = true; // numéro jamais modifié
             if (active)
             {
@@ -1809,6 +1811,7 @@ namespace MediaTekDocuments.view
             }
             btnRevuesAnnuler.Visible = active;
             btnRevuesEnregistrer.Visible = active;
+            btnRevuesParcourir.Visible = active;
             txbRevuesNumero.ReadOnly = true; // numéro jamais modifié
             if (active)
             {

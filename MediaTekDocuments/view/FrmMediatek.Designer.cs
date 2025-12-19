@@ -522,6 +522,7 @@ namespace MediaTekDocuments.view
             this.btnLivresParcourir.TabIndex = 39;
             this.btnLivresParcourir.Text = "Parcourir";
             this.btnLivresParcourir.UseVisualStyleBackColor = true;
+            this.btnLivresParcourir.Visible = false;
             this.btnLivresParcourir.Click += new System.EventHandler(this.btnLivresParcourir_Click);
             // 
             // label59
@@ -1075,6 +1076,7 @@ namespace MediaTekDocuments.view
             this.btnDvdParcourir.TabIndex = 38;
             this.btnDvdParcourir.Text = "Parcourir";
             this.btnDvdParcourir.UseVisualStyleBackColor = true;
+            this.btnDvdParcourir.Visible = false;
             this.btnDvdParcourir.Click += new System.EventHandler(this.btnDvdParcourir_Click);
             // 
             // btnDvdAnnuler
@@ -1555,6 +1557,7 @@ namespace MediaTekDocuments.view
             this.btnRevuesParcourir.TabIndex = 37;
             this.btnRevuesParcourir.Text = "Parcourir";
             this.btnRevuesParcourir.UseVisualStyleBackColor = true;
+            this.btnRevuesParcourir.Visible = false;
             this.btnRevuesParcourir.Click += new System.EventHandler(this.btnRevuesParcourir_Click);
             // 
             // btnRevuesAnnuler
